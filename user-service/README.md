@@ -90,7 +90,8 @@ It provides secure handling of user credentials (with password hashing), user re
 - Authentication required for profile retrieval.
 ## 🛠️ Tech Stack
 - **Java / Spring Boot** 
-- **H2** 
+- **H2**
+---
 
 
 
