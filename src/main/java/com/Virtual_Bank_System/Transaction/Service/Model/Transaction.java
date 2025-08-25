@@ -1,4 +1,5 @@
 package com.Virtual_Bank_System.Transaction.Service.Model;
+import org.hibernate.annotations.GenericGenerator;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,8 +16,9 @@ import java.util.UUID;
 @Entity
 @Table(name = "transactions")
 public class Transaction {
-    @Id
-    @GeneratedValue
+@Id
+@GeneratedValue(generator = "UUID")
+@Column(updatable = false, nullable = false)
     private UUID transactionId;
     @Column(nullable = false)
     private UUID fromAccountId;
@@ -26,7 +28,7 @@ public class Transaction {
     private double amount;
     @Column(length = 255)
     private String description;
-    @Column(nullable = false,updatable = false)
+    @Column(nullable = false)
     private Instant timestamp;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
