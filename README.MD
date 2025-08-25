@@ -77,8 +77,8 @@ The **Transaction Service** is a core module of the Virtual Bank System responsi
   "message": "Invalid 'from' or 'to' account ID or insufficient funds."
 }
 ```
-3. Get Transaction History for Account
-GET /transactions/accounts/{accountId}/transactions
+### 3. Get Transaction History for Account
+**GET** `/transactions/accounts/{accountId}/transactions`
 
 **Success Response (200 OK)**
 
