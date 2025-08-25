@@ -14,12 +14,12 @@ The **Account Service** is a core module of the Virtual Bank System responsible 
 
 ---
 
-## 📌 Endpoints  
+## 📌 API Endpoints 
 
 ### 1. Create New Account  
 **POST** `/accounts`  
 
-**Request Example**  
+**Request Body**  
 ```json
 {
   "userId": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
@@ -27,7 +27,7 @@ The **Account Service** is a core module of the Virtual Bank System responsible 
   "initialBalance": 100.00
 }
 ```
-**Response (201 Created)**  
+**Success Response (201 Created)**  
 ```json
 {
   "accountId": "f1e2d3c4-b5a6-9876-5432-10fedcba9876",
@@ -35,7 +35,7 @@ The **Account Service** is a core module of the Virtual Bank System responsible 
   "message": "Account created successfully."
 }
 ```
-**Error (400 Bad Request)**  
+**Error Response (400 Bad Request)**  
 ```json
 {
   "status": 400,
@@ -47,7 +47,7 @@ The **Account Service** is a core module of the Virtual Bank System responsible 
 **GET** `/accounts/{accountId}`  
 
 
-**Response (200 Ok)**  
+**Success Response (200 Ok)**  
 ```json
 {
   "accountId": "f1e2d3c4-b5a6-9876-5432-10fedcba9876",
@@ -57,7 +57,7 @@ The **Account Service** is a core module of the Virtual Bank System responsible 
   "status": "ACTIVE"
 }
 ```
-**Error (404 Not Found)**  
+**Error Response (404 Not Found)**  
 ```json
 {
   "status": 404,
@@ -69,7 +69,7 @@ The **Account Service** is a core module of the Virtual Bank System responsible 
 **GET** `/users/{userId}/accounts`  
 
 
-**Response (200 OK)**  
+**Success Response (200 OK)**  
 ```json
 [
   {
@@ -88,7 +88,7 @@ The **Account Service** is a core module of the Virtual Bank System responsible 
   }
 ]
 ```
-**Error (404 Not Found)**  
+**Error Response (404 Not Found)**  
 ```json
 {
   "status": 404,
@@ -99,7 +99,7 @@ The **Account Service** is a core module of the Virtual Bank System responsible 
 ### 4. Transfer Between Accounts  
 **PUT** `/accounts/transfer`  
 
-**Request Example**  
+**Request Body**  
 ```json
 {
   "fromAccountId": "f1e2d3c4-b5a6-9876-5432-10fedcba9876",
@@ -107,7 +107,7 @@ The **Account Service** is a core module of the Virtual Bank System responsible 
   "amount": 100.00
 }
 ```
-**Response (200 OK)**  
+**Success Response (200 OK)**  
 ```json
 {
   "message": "Account updated successfully."
@@ -121,7 +121,7 @@ The **Account Service** is a core module of the Virtual Bank System responsible 
 - - Account is currently **ACTIVE.**
   - Last transaction occurred **more than one day ago.**
 - **Schedule:** Runs **every 1 hour.**
-## ⚙️ Tech Stack
+## 🛠️ Tech Stack
 - **Language:** Java / Spring Boot 
 
 - **Database:** H2
