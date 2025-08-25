@@ -1,115 +1,130 @@
-🏦 Account Service
+# 🏦 Account Service  
 
-The Account Service is a microservice responsible for managing bank accounts. It handles account creation, balance retrieval and transfers between accounts. It ensures secure handling of account operations.
+The **Account Service** is a core module of the Virtual Bank System responsible for managing user bank accounts. It provides APIs for creating, retrieving, and updating bank accounts, as well as scheduled jobs to manage account statuses.  
 
+---
 
-🚀 Features
+## 🚀 Features  
 
-Create bank accounts for users.
-Create bank accounts with unique account numbers.
-Retrieve accounts by userId or accountID.
-Transfer funds between accounts securely.
-Handle errors such as insufficient balance or invalid accounts.
+- Create and manage unique bank accounts.  
+- Retrieve account details by account ID or user ID.  
+- Transfer balances between accounts.  
+- Maintain account balances and status.  
+- Scheduled job to inactivate stale accounts.  
 
+---
 
+## 📌 Endpoints  
 
-📌 API Endpoints
-🏦 Create Bank Account
+### 1. Create New Account  
+**POST** `/accounts`  
 
-Endpoint:
-
-POST /accounts
-
-
-Request Body:
-
+**Request Example**  
+```json
 {
-  "userId": "b2b3a45c-9ddc-421d-88f0-5b9d0ef9bcef",
+  "userId": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
   "accountType": "SAVINGS",
-  "balance": 1000
+  "initialBalance": 100.00
 }
-
-
-✅ Success Response (201 Created):
-
+```
+**Response (201 Created)**  
+```json
 {
-  "accountId": "7fa2c890-11aa-45d3-9b4a-91ca4e0b5bce",
-  "userId": "b2b3a45c-9ddc-421d-88f0-5b9d0ef9bcef",
-  "accountType": "SAVINGS",
-  "balance": 1000
+  "accountId": "f1e2d3c4-b5a6-9876-5432-10fedcba9876",
+  "accountNumber": "1234567890",
+  "message": "Account created successfully."
 }
-
-
-❌ Error Response (400 Bad Request):
-
+```
+**Error (400 Bad Request)**  
+```json
 {
   "status": 400,
   "error": "Bad Request",
   "message": "Invalid account type or initial balance."
 }
-
-👤 Get Accounts by UserId
-
-Endpoint:
-
-GET /accounts/{userId}/accounts
+```
+### 2. Get Account by ID  
+**GET** `/accounts/{accountId}`  
 
 
-✅ Success Response (200 OK):
-
-[
-  {
-    "accountId": "7fa2c890-11aa-45d3-9b4a-91ca4e0b5bce",
-    "accountNumber": "1234567890",
-    "accountType": "SAVINGS",
-    "balance": 1000
-  }
-]
-
-
-❌ Error Response (404 Not Found):
-
+**Response (200 Ok)**  
+```json
 {
-  "status": 404,
-  "error": "Not Found",
-  "message": "User with ID b2b3a45c-9ddc-421d-88f0-5b9d0ef9bcef not found."
-}
-
-🔎 Get Account by AccountId
-
-Endpoint:
-
-GET /accounts/{accountId}
-
-
-✅ Success Response (200 OK):
-
-{
-  "accountId": "7fa2c890-11aa-45d3-9b4a-91ca4e0b5bce",
+  "accountId": "f1e2d3c4-b5a6-9876-5432-10fedcba9876",
   "accountNumber": "1234567890",
   "accountType": "SAVINGS",
-  "balance": 1000
+  "balance": 100.00,
+  "status": "ACTIVE"
 }
-
-
-❌ Error Response (404 Not Found):
-
+```
+**Error (404 Not Found)**  
+```json
 {
   "status": 404,
   "error": "Not Found",
-  "message": "Account with accountNumber 1234567890 not found."
+  "message": "Account with ID f1e2d3c4-b5a6-9876-5432-10fedcba9876 not found."
 }
+```
+### 3. Get Accounts by User 
+**GET** `/users/{userId}/accounts`  
 
-🔒 Security
 
-Account operations are restricted to authenticated users.
+**Response (200 OK)**  
+```json
+[
+  {
+    "accountId": "f1e2d3c4-b5a6-9876-5432-10fedcba9876",
+    "accountNumber": "1234567890",
+    "accountType": "SAVINGS",
+    "balance": 100.00,
+    "status": "ACTIVE"
+  },
+  {
+    "accountId": "g7h8i9j0-k1l2-3456-7890-abcdef123456",
+    "accountNumber": "0987654321",
+    "accountType": "CHECKING",
+    "balance": 500.50,
+    "status": "ACTIVE"
+  }
+]
+```
+**Error (404 Not Found)**  
+```json
+{
+  "status": 404,
+  "error": "Not Found",
+  "message": "No accounts found for user ID a1b2c3d4-e5f6-7890-1234-567890abcdef."
+}
+```
+### 4. Transfer Between Accounts  
+**PUT** `/accounts/transfer`  
 
+**Request Example**  
+```json
+{
+  "fromAccountId": "f1e2d3c4-b5a6-9876-5432-10fedcba9876",
+  "toAccountId": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+  "amount": 100.00
+}
+```
+**Response (200 OK)**  
+```json
+{
+  "message": "Account updated successfully."
+}
+```
+## 🕒 Scheduled Job – Inactivate Stale Accounts
+- **Module:** Account Service
+- **Purpose:** Automatically mark accounts as **INACTIVE** if idle for over **24 hours.**
+- **Criteria:**
+- - Account is currently **ACTIVE.**
+  - Last transaction occurred **more than one day ago.**
+- **Schedule:** Runs **every 1 hour.**
+## ⚙️ Tech Stack
+- **Language:** Java / Spring Boot 
 
-🛠️ Tech Stack
+- **Database:** H2
 
-Java / Spring Boot
+- **Scheduler:** Spring Scheduler
 
-H2 Database
-
-REST API (Spring Web)
 
