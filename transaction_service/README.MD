@@ -26,65 +26,64 @@ The **Transaction Service** is a core module of the Virtual Bank System responsi
   "amount": 30.00,
   "description": "Transfer to checking account"
 }
-Success Response (200 OK)
+```
+**Success Response (200 OK)**
 
-json
-Copy
-Edit
+```json
 {
   "transactionId": "t1r2a3n4-s5a6-7890-1234-567890abcdef",
   "status": "Initiated",
   "timestamp": "2025-07-15T07:16:49.822Z"
 }
-Error Response (400 Bad Request)
+```
+**Error Response (400 Bad Request)**
 
-json
-Copy
-Edit
+```json
+
 {
   "status": 400,
   "error": "Bad Request",
   "message": "Invalid 'from' or 'to' account ID."
 }
-2. Execute Fund Transfer
-POST /transactions/transfer/execution
+```
+### 2. Execute Fund Transfer
+**POST** `/transactions/transfer/execution`
 
-Request Body
+**Request Body**
 
-json
-Copy
-Edit
+```json
+
 {
   "transactionId": "t1r2a3n4-s5a6-7890-1234-567890abcdef"
 }
-Success Response (200 OK)
+```
+**Success Response (200 OK)**
 
-json
-Copy
-Edit
+```json
+
 {
   "transactionId": "t1r2a3n4-s5a6-7890-1234-567890abcdef",
   "status": "Success",
   "timestamp": "2025-07-15T07:16:49.822Z"
 }
-Error Response (400 Bad Request)
+```
+**Error Response (400 Bad Request)**
 
-json
-Copy
-Edit
+```json
+
 {
   "status": 400,
   "error": "Bad Request",
   "message": "Invalid 'from' or 'to' account ID or insufficient funds."
 }
-3. Get Transaction History for Account
-GET /transactions/accounts/{accountId}/transactions
+```
+### 3. Get Transaction History for Account
+**GET** `/transactions/accounts/{accountId}/transactions`
 
-Success Response (200 OK)
+**Success Response (200 OK)**
 
-json
-Copy
-Edit
+```json
+
 [
   {
     "transactionId": "1r2a3n4-s536-7890-1234-567890abcd",
@@ -105,13 +104,14 @@ Edit
     "deliveryStatus": "DELIVERED"
   }
 ]
-Error Response (404 Not Found)
+```
+**Error Response (404 Not Found)**
 
-json
-Copy
-Edit
+```json
+
 {
   "status": 404,
   "error": "Not Found",
   "message": "No transactions found for account ID f1e2d3c4-b5a6-9876-5432-10fedcba9876."
 }
+```
