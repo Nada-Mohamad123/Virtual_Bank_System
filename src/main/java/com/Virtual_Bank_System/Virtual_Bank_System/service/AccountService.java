@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,6 +26,14 @@ public class AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+    public void InactiveAccounts(){
+        LocalDateTime cutoffTime = LocalDateTime.now().minusHours(24);
+        List<account>staleAccounts= accountRepository.findStaleAccounts(cutoffTime);
+        for(account acc : staleAccounts){
+            acc.setStatus(accountStatus.INACTIVE);
+        }
+        accountRepository.saveAll(staleAccounts);
+    }
 
     // Create a new account
     public account createAccount(AccountRequestDTO dto) {
@@ -58,16 +67,22 @@ public AccountDetailsDTO getAccountById(UUID accountId) {
 }
 
 // Get accounts by userId
-public List<account> getAccountsByUser(UUID userId) {
+public List<AccountDetailsDTO> getAccountsByUser(UUID userId) {
     List<account> accounts = accountRepository.findByUserId(userId);
     if (accounts.isEmpty()) {
-        throw new EntityNotFoundException("No accounts found for user: " + userId);
+        throw new EntityNotFoundException("No accounts found for user ID " + userId);
     }
-    return accounts;
+    return accounts.stream().map(acc->new AccountDetailsDTO(
+            acc.getId(),
+            acc.getAccountNumber(),
+            acc.getAccountType(),
+            acc.getBalance(),
+            acc.getStatus()
+    )).toList();
 }
 
 
-// ✅ Transfer money between accounts
+//  Transfer money between accounts
 @Transactional
 public void transferFunds(TransferRequestDTO dto) {
     if (dto.getFromAccountId() == null || dto.getToAccountId() == null || dto.getAmount() == null) {

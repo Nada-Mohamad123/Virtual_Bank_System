@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -34,7 +35,11 @@ public class account {
 
     
     @Enumerated(EnumType.STRING)
-    private accountStatus status;     // Use enum instead of String
+    private accountStatus status;// Use enum instead of String
+
+    private LocalDateTime lastTransactionAt;
+
+
 
     @PrePersist
     public void prePersist() {
@@ -48,6 +53,9 @@ public class account {
 
         if (this.status == null) {
             this.status = accountStatus.ACTIVE; // Or PENDING, depending on your logic
+        }
+        if (this.lastTransactionAt == null) {
+            this.lastTransactionAt = LocalDateTime.now();
         }
     }
 

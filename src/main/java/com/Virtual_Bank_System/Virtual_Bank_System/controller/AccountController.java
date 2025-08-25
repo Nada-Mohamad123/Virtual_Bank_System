@@ -41,13 +41,7 @@ public ResponseEntity<AccountDetailsDTO> getAccountById(@PathVariable UUID accou
     return ResponseEntity.ok(accountService.getAccountById(accountId));
 }
 
-    // Get all accounts for a user by userId
-    @GetMapping("/{userId}/accounts")
-    public ResponseEntity<List<account>> getAccountsByUser(@PathVariable UUID userId) {
-        return ResponseEntity.ok(accountService.getAccountsByUser(userId));
-    }
-
-   // ✅ Transfer funds using UUID IDs
+   //  Transfer funds using UUID IDs
    @PutMapping("/transfer")
     public ResponseEntity<?> transferFunds(@RequestBody TransferRequestDTO dto) {
     accountService.transferFunds(dto);
