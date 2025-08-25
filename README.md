@@ -113,6 +113,7 @@ The **Account Service** is a core module of the Virtual Bank System responsible 
   "message": "Account updated successfully."
 }
 ```
+---
 ## 🕒 Scheduled Job – Inactivate Stale Accounts
 - **Module:** Account Service
 - **Purpose:** Automatically mark accounts as **INACTIVE** if idle for over **24 hours.**
