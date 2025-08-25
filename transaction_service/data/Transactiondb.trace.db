@@ -1,0 +1,6 @@
+2025-08-24 14:02:51.534624+03:00 jdbc[14]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "TRRANSACTION" not found; SQL statement:
+SELECT * FROM TRRANSACTION [42102-232]
+2025-08-24 14:02:58.210912+03:00 jdbc[14]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "TRANSACTION" not found; SQL statement:
+SELECT * FROM TRANSACTION [42102-232]
