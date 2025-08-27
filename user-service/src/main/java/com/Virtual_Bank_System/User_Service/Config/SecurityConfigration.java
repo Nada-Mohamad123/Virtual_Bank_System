@@ -17,14 +17,12 @@ public class SecurityConfigration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**", "/users/register","/users/login","/users/{userId}/profile"))
+                .csrf(csrf -> csrf.disable()) // وقف CSRF للتست
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/h2-console/**", "/users/register","/users/login","/users/{userId}/profile").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll() // كل حاجة مفتوحة
                 )
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 
         return http.build();
     }
 }
-

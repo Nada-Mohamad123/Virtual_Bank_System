@@ -3,17 +3,14 @@ package com.Virtual_Bank_System.Virtual_Bank_System.service;
 import com.Virtual_Bank_System.Virtual_Bank_System.DTOs.AccountDetailsDTO;
 import com.Virtual_Bank_System.Virtual_Bank_System.DTOs.AccountRequestDTO;
 import com.Virtual_Bank_System.Virtual_Bank_System.DTOs.TransferRequestDTO;
-import com.Virtual_Bank_System.Virtual_Bank_System.DTOs.TransferResponseDTO;
 import com.Virtual_Bank_System.Virtual_Bank_System.model.account;
 import com.Virtual_Bank_System.Virtual_Bank_System.model.accountStatus;
-import com.Virtual_Bank_System.Virtual_Bank_System.model.accountType;
 import com.Virtual_Bank_System.Virtual_Bank_System.repository.AccountRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

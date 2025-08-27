@@ -23,7 +23,7 @@ public class account {
 
 
     @Enumerated(EnumType.STRING)
-    private accountType accountType;  // Use enum instead of String
+    private AccountType accountType;  // Use enum instead of String
 
 
     @Column(nullable = false)
@@ -52,8 +52,13 @@ public class account {
         }
 
         if (this.status == null) {
-            this.status = accountStatus.ACTIVE; // Or PENDING, depending on your logic
+            this.status = accountStatus.ACTIVE; // Default status
         }
+
+        if (this.accountType == null) {
+            this.accountType = AccountType.SAVINGS; // Default account type
+        }
+
         if (this.lastTransactionAt == null) {
             this.lastTransactionAt = LocalDateTime.now();
         }
