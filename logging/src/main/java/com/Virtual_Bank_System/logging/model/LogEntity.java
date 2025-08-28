@@ -3,6 +3,7 @@ package com.Virtual_Bank_System.logging.model;
 
 import jakarta.persistence.*;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -10,16 +11,17 @@ import java.util.UUID;
 public class LogEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Lob
+    @Column(columnDefinition = "TEXT")
     private String message;
 
     private String messageType;
-    private Instant dateTime;
+    private Instant  dateTime;
 
-    // Lombok ممكن يختصر الكود، بس خليه يدوي أوتوماتيك للوضوح
+
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
 
@@ -29,6 +31,6 @@ public class LogEntity {
     public String getMessageType() { return messageType; }
     public void setMessageType(String messageType) { this.messageType = messageType; }
 
-    public Instant getDateTime() { return dateTime; }
-    public void setDateTime(Instant dateTime) { this.dateTime = dateTime; }
+    public Instant  getDateTime() { return dateTime; }
+    public void setDateTime(Instant  dateTime) { this.dateTime = dateTime; }
 }
