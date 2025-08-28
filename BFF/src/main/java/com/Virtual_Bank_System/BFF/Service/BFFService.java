@@ -6,7 +6,6 @@ import com.Virtual_Bank_System.BFF.Client.UserServiceClient;
 import com.Virtual_Bank_System.BFF.DTOs.*;
 import com.Virtual_Bank_System.BFF.Mapper.DashboardMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,15 +17,33 @@ public class BFFService {
     private final UserServiceClient userClient;
     private final AccountServiceClient accountClient;
     private final TransactionServiceClient transactionClient;
-
     private final DashboardMapper dashboardMapper;
-    public DashboardResponse getDashboard(UUID userId){
-        UserDto user = userClient.getUserProfile(userId);
-        List<AccountDto>accounts = accountClient.getUserAccounts(userId);
-        List<AccountWithTrans>accWithTrans = accounts.stream()
-                .map(acc -> new AccountWithTrans(acc,transactionClient.getAccountTransactions(acc.getAccountId())))
+
+    public DashboardResponse getDashboard(UUID userId) {
+
+        UserDto user;
+        try {
+            user = userClient.getUserProfile(userId);
+        } catch (Exception ex) {
+
+            return null;
+        }
+
+        List<AccountDto> accounts;
+        try {
+            accounts = accountClient.getUserAccounts(userId);
+        } catch (Exception ex) {
+            accounts = List.of();
+        }
+
+        List<AccountWithTrans> accWithTrans = accounts.stream()
+                .map(acc -> new AccountWithTrans(
+                        acc,
+                        transactionClient.getAccountTransactions(acc.getAccountId())
+                ))
                 .toList();
-        DashboardAggregate aggregate = new DashboardAggregate(user,accWithTrans);
+
+        DashboardAggregate aggregate = new DashboardAggregate(user, accWithTrans);
         return dashboardMapper.toResponse(aggregate);
     }
 }

@@ -35,14 +35,12 @@ public class UserController {
     }
     @PostMapping("/register")
     public ResponseEntity<RegisterResponseDTO>registerUser(@RequestBody RegisterRequestDTO registerRequest){
-//        logProducer.sendLog("POST /users/register - Request", "Request");
         User user = userService.RegisterUser(registerRequest);
         RegisterResponseDTO response = new RegisterResponseDTO(
                 user.getUserId(),
                 user.getUserName(),
                 "User registered successfully."
         );
-//        logProducer.sendLog("User registered successfully: " + user.getUserName(), "Response");
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     @PostMapping("/login")
@@ -70,12 +68,12 @@ public class UserController {
 //        logProducer.sendLog("Profile retrieved for user: " + user.getUserName(), "Response");
            return ResponseEntity.ok(response);
     }
-    private void logAsJson(Object obj, String type) {
-        try {
-            String json = objectMapper.writeValueAsString(obj);
-            logProducer.sendLog(json, type);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-    }
+//    private void logAsJson(Object obj, String type) {
+//        try {
+//            String json = objectMapper.writeValueAsString(obj);
+//            logProducer.sendLog(json, type);
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

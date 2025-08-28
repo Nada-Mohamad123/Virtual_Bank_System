@@ -60,17 +60,15 @@ public TransferResponseDto executeTransfer(TransferExecutionRequestDto request) 
     Transaction transaction = transactionRepository.findById(request.getTransactionId())
             .orElseThrow(() -> new TransactionException("Transaction not found"));
 
-    // لو الترانزاكشن اتعمل له معالجة قبل كده
     if (transaction.getStatus() != TransactionStatus.Initiated) {
         throw new TransactionException("Transaction already processed");
     }
 
-    // ✅ تحقق من الحسابات في Account Service
     boolean fromAccountExists = checkAccountExists(transaction.getFromAccountId());
     boolean toAccountExists = checkAccountExists(transaction.getToAccountId());
 
     if (!fromAccountExists || !toAccountExists) {
-        // لو أي حساب مش موجود → فشل الترانزاكشن
+
         transaction.setStatus(TransactionStatus.Failed);
         transaction.setTimestamp(Instant.now());
         transactionRepository.save(transaction);
@@ -78,9 +76,9 @@ public TransferResponseDto executeTransfer(TransferExecutionRequestDto request) 
         throw new TransactionException("Invalid 'from' or 'to' account ID.");
     }
 
-    // ✅ الحسابات موجودة → اكمل الترانزاكشن
+
     transaction.setStatus(TransactionStatus.Success);
-    transaction.setDeliveryStatus(Transaction.DeliveryStatus.SENT); // ممكن تغير لـ DELIVERED لو تحبي
+    transaction.setDeliveryStatus(Transaction.DeliveryStatus.SENT);
     transaction.setTimestamp(Instant.now());
     transactionRepository.save(transaction);
 
@@ -93,12 +91,12 @@ public TransferResponseDto executeTransfer(TransferExecutionRequestDto request) 
 
 private boolean checkAccountExists(UUID accountId) {
     try {
-        String url = "http://localhost:8082/accounts/" + accountId; // أو account-service:8082 لو Docker
+        String url = "http://localhost:8082/accounts/" + accountId;
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         return response.getStatusCode() == HttpStatus.OK;
  
     } catch (Exception e) {
-        e.printStackTrace(); // هتشوفي لو فيه مشكلة
+        e.printStackTrace();
         return false;
     }
 }

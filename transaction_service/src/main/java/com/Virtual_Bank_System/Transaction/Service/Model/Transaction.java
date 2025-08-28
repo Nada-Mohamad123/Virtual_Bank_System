@@ -43,6 +43,7 @@ public class Transaction {
     }
     public enum DeliveryStatus{
         SENT,
-        DELIVERED
+        DELIVERED,
+        PENDING
     }
 }
