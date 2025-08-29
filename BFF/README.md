@@ -64,6 +64,6 @@ This endpoint demonstrates **data aggregation** from multiple microservices.
 ```
 ## 🛠️ Tech Stack
 
-- Java 17
-- Spring Boot
-- H2 
+- **Java 17**
+- **Spring Boot**
+- **H2** 
