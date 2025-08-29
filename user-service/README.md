@@ -16,7 +16,7 @@ It provides secure handling of user credentials (with password hashing), user re
 ### Request Body
 ```json
 {
-  "username": "john.doe",
+  "userName": "john.doe",
   "password": "securePassword123",
   "email": "john.doe@example.com",
   "firstName": "John",
@@ -27,7 +27,7 @@ It provides secure handling of user credentials (with password hashing), user re
 ```json
 {
   "userId": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
-  "username": "john.doe",
+  "userName": "john.doe",
   "message": "User registered successfully."
 }
 ```
@@ -44,7 +44,7 @@ It provides secure handling of user credentials (with password hashing), user re
 ### Request Body
 ```json
 {
-  "username": "john.doe",
+  "userName": "john.doe",
   "password": "securePassword123"
 }
 ```
@@ -52,7 +52,7 @@ It provides secure handling of user credentials (with password hashing), user re
 ```json
 {
   "userId": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
-  "username": "john.doe"
+  "userName": "john.doe"
 }
 ```
 ### Error Response (401 Unauthorized)
@@ -69,7 +69,7 @@ It provides secure handling of user credentials (with password hashing), user re
 ```json
 {
   "userId": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
-  "username": "john.doe",
+  "userName": "john.doe",
   "email": "john.doe@example.com",
   "firstName": "John",
   "lastName": "Doe"
@@ -89,9 +89,10 @@ It provides secure handling of user credentials (with password hashing), user re
 - All passwords are hashed before being persisted in the database.
 - Authentication required for profile retrieval.
 ## 🛠️ Tech Stack
-- **Java / Spring Boot** 
+- **Java 17**
+- **Spring Boot** 
 - **H2**
----
+
 
 
 
