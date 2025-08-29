@@ -45,18 +45,18 @@ public class UserController {
     }
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> loginUser(@RequestBody LoginRequestDTO loginRequest){
-//        logProducer.sendLog("POST /users/Login - Request", "Request");
+        logProducer.sendLog("POST /users/Login - Request", "Request");
         User user = userService.LoginUser(loginRequest);
         LoginResponseDTO response = new LoginResponseDTO(
                 user.getUserId(),
                 user.getUserName()
         );
-//        logProducer.sendLog("User logged in: " + user.getUserName(), "Response");
+       logProducer.sendLog("User logged in: " + user.getUserName(), "Response");
         return ResponseEntity.ok(response);
     }
     @GetMapping("/{userId}/profile")
     public ResponseEntity<ProfileResponseDTO>getUserProfile(@PathVariable UUID userId){
-//        logProducer.sendLog("GET /users/" + userId + "/profile - Request", "Request");
+        logProducer.sendLog("GET /users/" + userId + "/profile - Request", "Request");
         User user = userService.getUserProfileById(userId);
            ProfileResponseDTO response = new ProfileResponseDTO(
                    user.getUserId(),
@@ -65,15 +65,8 @@ public class UserController {
                    user.getFirstName(),
                    user.getLastName()
            );
-//        logProducer.sendLog("Profile retrieved for user: " + user.getUserName(), "Response");
+        logProducer.sendLog("Profile retrieved for user: " + user.getUserName(), "Response");
            return ResponseEntity.ok(response);
     }
-//    private void logAsJson(Object obj, String type) {
-//        try {
-//            String json = objectMapper.writeValueAsString(obj);
-//            logProducer.sendLog(json, type);
-//        } catch (JsonProcessingException e) {
-//            e.printStackTrace();
-//        }
-//    }
+
 }

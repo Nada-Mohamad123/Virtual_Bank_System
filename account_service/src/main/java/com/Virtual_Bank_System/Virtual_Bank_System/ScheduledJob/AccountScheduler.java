@@ -10,6 +10,8 @@ public class AccountScheduler {
     @Autowired
     AccountService accountService;
     //job run every one hour
+    //60000 ms = 1 minute
+    //3600000 ms = 1 hour
     @Scheduled(fixedRate = 3600000)
     public void RunJob(){
         accountService.InactiveAccounts();

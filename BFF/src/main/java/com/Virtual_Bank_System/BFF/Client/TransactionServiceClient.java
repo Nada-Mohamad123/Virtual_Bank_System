@@ -10,6 +10,6 @@ import java.util.UUID;
 
 @FeignClient(name="transaction-service",url="${transaction-service.url}")
 public interface TransactionServiceClient {
-    @GetMapping("/transactions/accounts/{accountId}/transactions")
+    @GetMapping("/accounts/{accountId}/transactions")
     List<TransactionDto> getAccountTransactions(@PathVariable UUID accountId);
 }

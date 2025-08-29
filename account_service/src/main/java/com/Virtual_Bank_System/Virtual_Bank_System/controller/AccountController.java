@@ -1,19 +1,14 @@
 package com.Virtual_Bank_System.Virtual_Bank_System.controller;
 
-import com.Virtual_Bank_System.Virtual_Bank_System.DTOs.AccountDetailsDTO;
-import com.Virtual_Bank_System.Virtual_Bank_System.DTOs.AccountRequestDTO;
-import com.Virtual_Bank_System.Virtual_Bank_System.DTOs.AccountResponseDTO;
-import com.Virtual_Bank_System.Virtual_Bank_System.DTOs.TransferRequestDTO;
-import com.Virtual_Bank_System.Virtual_Bank_System.DTOs.TransferResponseDTO;
-import com.Virtual_Bank_System.Virtual_Bank_System.model.account;
+import com.Virtual_Bank_System.Virtual_Bank_System.DTOs.*;
+import com.Virtual_Bank_System.Virtual_Bank_System.model.Account;
 import com.Virtual_Bank_System.Virtual_Bank_System.service.AccountService;
+import com.Virtual_Bank_System.Virtual_Bank_System.service.LogProducerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -22,30 +17,56 @@ public class AccountController {
 
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private LogProducerService logProducer;
 
-    // ✅ Create new account and return DTO response
+    // Create new account and return DTO response
     @PostMapping
     public ResponseEntity<AccountResponseDTO> createAccount(@RequestBody AccountRequestDTO dto) {
-        account savedAccount = accountService.createAccount(dto);
+        logProducer.sendLog("POST /accounts - Request received", "Request");
+        try {
+            Account savedAccount = accountService.createAccount(dto);
 
-        AccountResponseDTO response = new AccountResponseDTO(
-                savedAccount.getId().toString(),
-                savedAccount.getAccountNumber(),
-                "Account created successfully."
-        );
+            AccountResponseDTO response = new AccountResponseDTO(
+                    savedAccount.getId().toString(),
+                    savedAccount.getAccountNumber(),
+                    "Account created successfully."
+            );
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            logProducer.sendLog("Account created successfully: " + savedAccount.getAccountNumber(), "Success");
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+        } catch (Exception e) {
+            logProducer.sendLog("Failed to create account: " + e.getMessage(), "Error");
+            throw e;
+        }
     }
 @GetMapping("/{accountId}")
+
 public ResponseEntity<AccountDetailsDTO> getAccountById(@PathVariable UUID accountId) {
-    return ResponseEntity.ok(accountService.getAccountById(accountId));
+    logProducer.sendLog("GET /accounts/" + accountId + " - Request received", "Request");
+    AccountDetailsDTO details = accountService.getAccountById(accountId);
+    logProducer.sendLog("Fetched account details for ID: " + accountId, "Success");
+    return ResponseEntity.ok(details);
 }
 
    //  Transfer funds using UUID IDs
    @PutMapping("/transfer")
     public ResponseEntity<?> transferFunds(@RequestBody TransferRequestDTO dto) {
-    accountService.transferFunds(dto);
-    return ResponseEntity.ok("{\"message\":\"Account updated successfully.\"}");
+       logProducer.sendLog("PUT /accounts/transfer - Request received", "Request");
+
+       try {
+           accountService.transferFunds(dto);
+
+           TransferResponseDTO response = new TransferResponseDTO("Transfer completed successfully.");
+           logProducer.sendLog("Funds transferred successfully", "Success");
+
+           return ResponseEntity.ok(response);
+
+       } catch (Exception e) {
+           logProducer.sendLog("Failed to transfer funds: " + e.getMessage(), "Error");
+           throw e;
+       }
+   }
 }
 
-}

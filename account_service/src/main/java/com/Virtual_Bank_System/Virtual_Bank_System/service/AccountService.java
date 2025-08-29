@@ -3,7 +3,7 @@ package com.Virtual_Bank_System.Virtual_Bank_System.service;
 import com.Virtual_Bank_System.Virtual_Bank_System.DTOs.AccountDetailsDTO;
 import com.Virtual_Bank_System.Virtual_Bank_System.DTOs.AccountRequestDTO;
 import com.Virtual_Bank_System.Virtual_Bank_System.DTOs.TransferRequestDTO;
-import com.Virtual_Bank_System.Virtual_Bank_System.model.account;
+import com.Virtual_Bank_System.Virtual_Bank_System.model.Account;
 import com.Virtual_Bank_System.Virtual_Bank_System.model.accountStatus;
 import com.Virtual_Bank_System.Virtual_Bank_System.repository.AccountRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,21 +25,21 @@ public class AccountService {
     private AccountRepository accountRepository;
     public void InactiveAccounts(){
         LocalDateTime cutoffTime = LocalDateTime.now().minusHours(24);
-        List<account>staleAccounts= accountRepository.findStaleAccounts(cutoffTime);
-        for(account acc : staleAccounts){
+        List<Account>staleAccounts= accountRepository.findStaleAccounts(cutoffTime);
+        for(Account acc : staleAccounts){
             acc.setStatus(accountStatus.INACTIVE);
         }
         accountRepository.saveAll(staleAccounts);
     }
 
     // Create a new account
-    public account createAccount(AccountRequestDTO dto) {
+    public Account createAccount(AccountRequestDTO dto) {
         if (dto.getInitialBalance() == null || dto.getInitialBalance().compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Invalid account type or initial balance.");
         }
 
 
-        account acc = new account();
+        Account acc = new Account();
         acc.setUserId(dto.getUserId());
         acc.setAccountType(dto.getAccountType()); // save account type
         acc.setBalance(dto.getInitialBalance());
@@ -51,7 +51,7 @@ public class AccountService {
 
 // Get accounts by accountId
 public AccountDetailsDTO getAccountById(UUID accountId) {
-    account acc = accountRepository.findById(accountId)
+    Account acc = accountRepository.findById(accountId)
             .orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
     return new AccountDetailsDTO(
@@ -65,7 +65,7 @@ public AccountDetailsDTO getAccountById(UUID accountId) {
 
 // Get accounts by userId
 public List<AccountDetailsDTO> getAccountsByUser(UUID userId) {
-    List<account> accounts = accountRepository.findByUserId(userId);
+    List<Account> accounts = accountRepository.findByUserId(userId);
     if (accounts.isEmpty()) {
         throw new EntityNotFoundException("No accounts found for user ID " + userId);
     }
@@ -90,10 +90,10 @@ public void transferFunds(TransferRequestDTO dto) {
         throw new IllegalArgumentException("Cannot transfer to the same account");
     }
 
-    account fromAccount = accountRepository.findById(dto.getFromAccountId())
+    Account fromAccount = accountRepository.findById(dto.getFromAccountId())
             .orElseThrow(() -> new EntityNotFoundException("Source account not found"));
 
-    account toAccount = accountRepository.findById(dto.getToAccountId())
+    Account toAccount = accountRepository.findById(dto.getToAccountId())
             .orElseThrow(() -> new EntityNotFoundException("Destination account not found"));
 
     if (fromAccount.getBalance().compareTo(dto.getAmount()) < 0) {
@@ -111,7 +111,7 @@ public void transferFunds(TransferRequestDTO dto) {
     // ---------------- Helper method ----------------
     private String generateUniqueAccountNumber() {
         String accountNumber;
-        Optional<account> existing;
+        Optional<Account> existing;
 
         // Keep generating until a unique number is found
         do {

@@ -8,11 +8,11 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Data                   // Generates getters, setters, equals, hashCode, toString
-@NoArgsConstructor      // Generates no-args constructor
-@AllArgsConstructor     // Generates all-args constructor
-@Builder                // Enables builder pattern
-public class account {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -1,8 +1,8 @@
 package com.Virtual_Bank_System.Virtual_Bank_System.controller;
 
 import com.Virtual_Bank_System.Virtual_Bank_System.DTOs.AccountDetailsDTO;
-import com.Virtual_Bank_System.Virtual_Bank_System.model.account;
 import com.Virtual_Bank_System.Virtual_Bank_System.service.AccountService;
+import com.Virtual_Bank_System.Virtual_Bank_System.service.LogProducerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +18,21 @@ import java.util.UUID;
 public class UserAccountController {
     @Autowired
     AccountService accountService;
+    @Autowired
+    LogProducerService logProducer;
     // Get all accounts for a user by userId
     @GetMapping
     public ResponseEntity<List<AccountDetailsDTO>> getAccountsByUser(@PathVariable UUID userId) {
-        return ResponseEntity.ok(accountService.getAccountsByUser(userId));
+        logProducer.sendLog("GET /users/" + userId + "/accounts - Request received", "Request");
+        try {
+            List<AccountDetailsDTO> accounts = accountService.getAccountsByUser(userId);
+
+            logProducer.sendLog("Fetched " + accounts.size() + " accounts for userId=" + userId, "Success");
+            return ResponseEntity.ok(accounts);
+
+        } catch (Exception e) {
+            logProducer.sendLog("Failed to fetch accounts for userId=" + userId + ": " + e.getMessage(), "Error");
+            throw e;
+        }
     }
 }
