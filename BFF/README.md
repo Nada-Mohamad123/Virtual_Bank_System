@@ -62,3 +62,8 @@ This endpoint demonstrates **data aggregation** from multiple microservices.
   "message": "User not found."
 }
 ```
+## 🛠️ Tech Stack
+
+- Java 17
+- Spring Boot
+- H2 
