@@ -78,7 +78,7 @@ The **Transaction Service** is a core module of the Virtual Bank System responsi
 }
 ```
 ### 3. Get Transaction History for Account
-**GET** `/transactions/accounts/{accountId}/transactions`
+**GET** `/accounts/{accountId}/transactions`
 
 **Success Response (200 OK)**
 
@@ -115,3 +115,8 @@ The **Transaction Service** is a core module of the Virtual Bank System responsi
   "message": "No transactions found for account ID f1e2d3c4-b5a6-9876-5432-10fedcba9876."
 }
 ```
+## 🛠️ Tech Stack
+
+- **Java 17**
+- **Spring Boot**
+- **H2**
