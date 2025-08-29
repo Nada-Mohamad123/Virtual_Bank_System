@@ -89,9 +89,10 @@ It provides secure handling of user credentials (with password hashing), user re
 - All passwords are hashed before being persisted in the database.
 - Authentication required for profile retrieval.
 ## 🛠️ Tech Stack
-- **Java / Spring Boot** 
+- **Java 17**
+- **Spring Boot** 
 - **H2**
----
+
 
 
 
