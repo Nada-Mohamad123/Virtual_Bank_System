@@ -16,7 +16,7 @@ It provides secure handling of user credentials (with password hashing), user re
 ### Request Body
 ```json
 {
-  "username": "john.doe",
+  "userName": "john.doe",
   "password": "securePassword123",
   "email": "john.doe@example.com",
   "firstName": "John",
