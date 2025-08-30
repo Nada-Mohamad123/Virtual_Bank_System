@@ -101,7 +101,11 @@ public void transferFunds(TransferRequestDTO dto) {
     }
 
     fromAccount.setBalance(fromAccount.getBalance().subtract(dto.getAmount()));
+    fromAccount.setStatus(accountStatus.ACTIVE);
+    fromAccount.setLastTransactionAt(LocalDateTime.now());
     toAccount.setBalance(toAccount.getBalance().add(dto.getAmount()));
+    toAccount.setStatus(accountStatus.ACTIVE);
+    toAccount.setLastTransactionAt(LocalDateTime.now());
 
     accountRepository.save(fromAccount);
     accountRepository.save(toAccount);

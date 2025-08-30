@@ -43,7 +43,7 @@ public class TransactionService {
                 .amount(request.getAmount())
                 .description(request.getDescription())
                 .status(TransactionStatus.Initiated)
-                .deliveryStatus(Transaction.DeliveryStatus.PENDING) // ✅ أضف القيمة هنا
+                .deliveryStatus(Transaction.DeliveryStatus.PENDING)
                 .timestamp(Instant.now())
                 .build();
 
