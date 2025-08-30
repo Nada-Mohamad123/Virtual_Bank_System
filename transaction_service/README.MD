@@ -22,7 +22,7 @@ The **Transaction Service** is a core module of the Virtual Bank System responsi
 ```json
 {
   "fromAccountId": "f1e2d3c4-b5a6-9876-5432-10fedcba9876",
-  "toAccountId": "g7h8i9j0-k1l2-3456-7890-abcdef123456",
+  "toAccountId": "a1b2c3d4-e5f6-7890-ab12-cdef34567890",
   "amount": 30.00,
   "description": "Transfer to checking account"
 }
