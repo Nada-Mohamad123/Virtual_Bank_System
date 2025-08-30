@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +30,7 @@ public class TransactionService {
         this.restTemplate = restTemplate;
     }
 
+    // ---------------- Initiate ----------------
     public TransferResponseDto initiateTransfer(TransferInitiationRequestDto request) {
         if (request.getFromAccountId() == null || request.getToAccountId() == null) {
             throw new TransactionException("Invalid 'from' or 'to' account ID.");
@@ -56,51 +58,81 @@ public class TransactionService {
                 .build();
     }
 
-public TransferResponseDto executeTransfer(TransferExecutionRequestDto request) {
-    Transaction transaction = transactionRepository.findById(request.getTransactionId())
-            .orElseThrow(() -> new TransactionException("Transaction not found"));
+    // ---------------- Execute ----------------
+    public TransferResponseDto executeTransfer(TransferExecutionRequestDto request) {
+        Transaction transaction = transactionRepository.findById(request.getTransactionId())
+                .orElseThrow(() -> new TransactionException("Transaction not found"));
 
-    if (transaction.getStatus() != TransactionStatus.Initiated) {
-        throw new TransactionException("Transaction already processed");
-    }
+        if (transaction.getStatus() != TransactionStatus.Initiated) {
+            throw new TransactionException("Transaction already processed");
+        }
 
-    boolean fromAccountExists = checkAccountExists(transaction.getFromAccountId());
-    boolean toAccountExists = checkAccountExists(transaction.getToAccountId());
+        boolean fromAccountExists = checkAccountExists(transaction.getFromAccountId());
+        boolean toAccountExists = checkAccountExists(transaction.getToAccountId());
 
-    if (!fromAccountExists || !toAccountExists) {
+        if (!fromAccountExists || !toAccountExists) {
+            transaction.setStatus(TransactionStatus.Failed);
+            transaction.setTimestamp(Instant.now());
+            transactionRepository.save(transaction);
+            throw new TransactionException("Invalid 'from' or 'to' account ID.");
+        }
 
-        transaction.setStatus(TransactionStatus.Failed);
+        // ✅ Call Account-Service to perform transfer
+        boolean transferSuccess = callAccountServiceTransfer(
+                transaction.getFromAccountId(),
+                transaction.getToAccountId(),
+                transaction.getAmount()
+        );
+
+        if (!transferSuccess) {
+            transaction.setStatus(TransactionStatus.Failed);
+            transaction.setTimestamp(Instant.now());
+            transactionRepository.save(transaction);
+            throw new TransactionException("Balance update failed in Account-Service.");
+        }
+
+        // ✅ If success
+        transaction.setStatus(TransactionStatus.Success);
+        transaction.setDeliveryStatus(Transaction.DeliveryStatus.SENT);
         transaction.setTimestamp(Instant.now());
         transactionRepository.save(transaction);
 
-        throw new TransactionException("Invalid 'from' or 'to' account ID.");
+        return TransferResponseDto.builder()
+                .transactionId(transaction.getTransactionId())
+                .status(transaction.getStatus())
+                .timestamp(transaction.getTimestamp())
+                .build();
     }
 
-
-    transaction.setStatus(TransactionStatus.Success);
-    transaction.setDeliveryStatus(Transaction.DeliveryStatus.SENT);
-    transaction.setTimestamp(Instant.now());
-    transactionRepository.save(transaction);
-
-    return TransferResponseDto.builder()
-            .transactionId(transaction.getTransactionId())
-            .status(transaction.getStatus())
-            .timestamp(transaction.getTimestamp())
-            .build();
-}
-
-private boolean checkAccountExists(UUID accountId) {
-    try {
-        String url = "http://localhost:8082/accounts/" + accountId;
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        return response.getStatusCode() == HttpStatus.OK;
- 
-    } catch (Exception e) {
-        e.printStackTrace();
-        return false;
+    // ---------------- Helpers ----------------
+    private boolean checkAccountExists(UUID accountId) {
+        try {
+            String url = "http://localhost:8082/accounts/" + accountId;
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            return response.getStatusCode() == HttpStatus.OK;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
-}
 
+    private boolean callAccountServiceTransfer(UUID fromAccountId, UUID toAccountId, double amount) {
+        try {
+            String url = "http://localhost:8082/accounts/transfer";
+
+TransferInitiationRequestDto dto = new TransferInitiationRequestDto();
+dto.setFromAccountId(fromAccountId);
+dto.setToAccountId(toAccountId);
+dto.setAmount(amount);
+dto.setDescription("Fund transfer");
+
+            restTemplate.put(url, dto); // use PUT because Account-Service expects @PutMapping
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public List<TransactionHistoryDto> getTransactionsByAccount(UUID accountId) {
         List<Transaction> transactions = transactionRepository.findAll().stream()
