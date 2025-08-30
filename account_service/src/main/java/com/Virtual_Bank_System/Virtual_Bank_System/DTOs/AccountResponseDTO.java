@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @JsonPropertyOrder({"accountId","accountNumber","message"})
+
 public class AccountResponseDTO {
     private String accountId;
     private String accountNumber;
