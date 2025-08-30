@@ -13,7 +13,17 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Handle invalid UUID / JSON parse errors
+    // Handle BaseException and its subclasses
+    @ExceptionHandler(BaseException.class)
+    public ResponseEntity<Map<String, Object>> handleBaseException(BaseException ex) {
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("status", ex.getStatus().value());
+        errorResponse.put("error", ex.getStatus().getReasonPhrase());
+        errorResponse.put("message", ex.getMessage());
+        return new ResponseEntity<>(errorResponse, ex.getStatus());
+    }
+
+     //Handle invalid UUID / JSON parse errors
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Map<String, Object>> handleInvalidUUID(HttpMessageNotReadableException ex) {
         Map<String, Object> errorResponse = new HashMap<>();
@@ -24,7 +34,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    // Optional: generic handler for other exceptions
+    // Generic fallback for any other uncaught exceptions
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleAllExceptions(Exception ex) {
         Map<String, Object> errorResponse = new HashMap<>();

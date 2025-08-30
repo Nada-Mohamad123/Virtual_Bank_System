@@ -4,6 +4,7 @@ import com.Virtual_Bank_System.Transaction.Service.DTOs.TransactionHistoryDto;
 import com.Virtual_Bank_System.Transaction.Service.DTOs.TransferExecutionRequestDto;
 import com.Virtual_Bank_System.Transaction.Service.DTOs.TransferInitiationRequestDto;
 import com.Virtual_Bank_System.Transaction.Service.DTOs.TransferResponseDto;
+import com.Virtual_Bank_System.Transaction.Service.Exception.BaseException;
 import com.Virtual_Bank_System.Transaction.Service.Exception.TransactionException;
 import com.Virtual_Bank_System.Transaction.Service.Model.Transaction;
 import com.Virtual_Bank_System.Transaction.Service.Model.Transaction.TransactionStatus;
@@ -74,10 +75,10 @@ public class TransactionService {
             transaction.setStatus(TransactionStatus.Failed);
             transaction.setTimestamp(Instant.now());
             transactionRepository.save(transaction);
-            throw new TransactionException("Invalid 'from' or 'to' account ID.");
+            throw new BaseException.transferErrorException("Invalid 'from' or 'to' account ID.");
         }
 
-        // ✅ Call Account-Service to perform transfer
+        //  Call Account-Service to perform transfer
         boolean transferSuccess = callAccountServiceTransfer(
                 transaction.getFromAccountId(),
                 transaction.getToAccountId(),
@@ -91,7 +92,7 @@ public class TransactionService {
             throw new TransactionException("Balance update failed in Account-Service.");
         }
 
-        // ✅ If success
+        //  If success
         transaction.setStatus(TransactionStatus.Success);
         transaction.setDeliveryStatus(Transaction.DeliveryStatus.SENT);
         transaction.setTimestamp(Instant.now());
