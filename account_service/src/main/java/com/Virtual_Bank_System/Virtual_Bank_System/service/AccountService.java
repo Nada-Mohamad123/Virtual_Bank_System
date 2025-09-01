@@ -25,7 +25,7 @@ public class AccountService {
 
     //  Mark accounts inactive if no transaction in the last minute
     public void InactiveAccounts() {
-        LocalDateTime cutoffTime = LocalDateTime.now().minusMinutes(1);
+        LocalDateTime cutoffTime = LocalDateTime.now().minusHours(24);
         List<Account> staleAccounts = accountRepository.findStaleAccounts(cutoffTime);
         for (Account acc : staleAccounts) {
             acc.setStatus(accountStatus.INACTIVE);
