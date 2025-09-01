@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,48 +26,76 @@ public class TransactionController {
     }
 
     @PostMapping("/transfer/initiation")
-    public ResponseEntity<TransferResponseDto> initiateTransfer(@RequestBody TransferInitiationRequestDto request) {
-        logProducer.sendLog("POST /transactions/transfer/initiation - Request received", "Request");
+    public ResponseEntity<?> initiateTransfer(@RequestBody TransferInitiationRequestDto request) {
+        logProducer.sendLog(request, "Request");
 
         try {
             TransferResponseDto response = transactionService.initiateTransfer(request);
-            logProducer.sendLog("Transfer initiation successful for source=" + request.getFromAccountId(), "Success");
+            logProducer.sendLog(response, "Response");
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
+        } catch (TransactionException e) {
             logProducer.sendLog("Failed to initiate transfer: " + e.getMessage(), "Error");
-            throw e;
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "status", HttpStatus.BAD_REQUEST.value(),
+                    "error", "Bad Request",
+                    "message", e.getMessage()
+            ));
+        } catch (Exception e) {
+            logProducer.sendLog("Unexpected error during initiation: " + e.getMessage(), "Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "status", HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "error", "Internal Server Error",
+                    "message", "Something went wrong"
+            ));
         }
     }
 
     @PostMapping("/transfer/execution")
-    public ResponseEntity<TransferResponseDto> executeTransfer(@RequestBody TransferExecutionRequestDto request) {
-        logProducer.sendLog("POST /transactions/transfer/execution - Request received", "Request");
+    public ResponseEntity<?> executeTransfer(@RequestBody TransferExecutionRequestDto request) {
+        logProducer.sendLog(request, "Request");
 
         try {
             TransferResponseDto response = transactionService.executeTransfer(request);
-            logProducer.sendLog("Transfer execution successful for transactionId=" + request.getTransactionId(), "Success");
+            logProducer.sendLog(response, "Response");
             return ResponseEntity.ok(response);
-        } catch (Exception e) {
+        } catch (TransactionException e) {
             logProducer.sendLog("Failed to execute transfer: " + e.getMessage(), "Error");
-            throw e;
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "status", HttpStatus.BAD_REQUEST.value(),
+                    "error", "Bad Request",
+                    "message", e.getMessage()
+            ));
+        } catch (Exception e) {
+            logProducer.sendLog("Unexpected error during execution: " + e.getMessage(), "Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "status", HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "error", "Internal Server Error",
+                    "message", "Something went wrong"
+            ));
         }
     }
 
     @GetMapping("/accounts/{accountId}/transactions")
     public ResponseEntity<?> getAccountTransactions(@PathVariable UUID accountId) {
-        logProducer.sendLog("GET /transactions/accounts/" + accountId + "/transactions - Request received", "Request");
+        logProducer.sendLog("GET /transactions/accounts/" + accountId + "/transactions - Request received", "Request");;
 
         try {
             List<TransactionHistoryDto> transactions = transactionService.getTransactionsByAccount(accountId);
-            logProducer.sendLog("Fetched " + transactions.size() + " transactions for accountId=" + accountId, "Success");
+            logProducer.sendLog(transactions, "Response");
             return ResponseEntity.ok(transactions);
         } catch (TransactionException e) {
             logProducer.sendLog("Failed to fetch transactions for accountId=" + accountId + ": " + e.getMessage(), "Error");
-
-            return ResponseEntity.status(404).body(Map.of(
-                    "status", 404,
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                    "status", HttpStatus.NOT_FOUND.value(),
                     "error", "Not Found",
                     "message", e.getMessage()
+            ));
+        } catch (Exception e) {
+            logProducer.sendLog("Unexpected error while fetching transactions: " + e.getMessage(), "Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "status", HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "error", "Internal Server Error",
+                    "message", "Something went wrong"
             ));
         }
     }

@@ -35,28 +35,30 @@ public class UserController {
     }
     @PostMapping("/register")
     public ResponseEntity<RegisterResponseDTO>registerUser(@RequestBody RegisterRequestDTO registerRequest){
+        logProducer.sendLog(registerRequest, "Request");
         User user = userService.RegisterUser(registerRequest);
         RegisterResponseDTO response = new RegisterResponseDTO(
                 user.getUserId(),
                 user.getUserName(),
                 "User registered successfully."
         );
+        logProducer.sendLog(response, "Request");
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> loginUser(@RequestBody LoginRequestDTO loginRequest){
-        logProducer.sendLog("POST /users/Login - Request", "Request");
+        logProducer.sendLog(loginRequest, "Request");
         User user = userService.LoginUser(loginRequest);
         LoginResponseDTO response = new LoginResponseDTO(
                 user.getUserId(),
                 user.getUserName()
         );
-       logProducer.sendLog("User logged in: " + user.getUserName(), "Response");
+       logProducer.sendLog(response, "Response");
         return ResponseEntity.ok(response);
     }
     @GetMapping("/{userId}/profile")
     public ResponseEntity<ProfileResponseDTO>getUserProfile(@PathVariable UUID userId){
-        logProducer.sendLog("GET /users/" + userId + "/profile - Request", "Request");
+        logProducer.sendLog("GET /users/" + userId + "/profile - Request received", "Request");
         User user = userService.getUserProfileById(userId);
            ProfileResponseDTO response = new ProfileResponseDTO(
                    user.getUserId(),
@@ -65,7 +67,7 @@ public class UserController {
                    user.getFirstName(),
                    user.getLastName()
            );
-        logProducer.sendLog("Profile retrieved for user: " + user.getUserName(), "Response");
+        logProducer.sendLog(response, "Response");
            return ResponseEntity.ok(response);
     }
 

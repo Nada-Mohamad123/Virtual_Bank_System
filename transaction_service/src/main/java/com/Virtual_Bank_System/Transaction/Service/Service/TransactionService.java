@@ -78,6 +78,15 @@ public class TransactionService {
             throw new BaseException.transferErrorException("Invalid 'from' or 'to' account ID.");
         }
 
+        //  Check balance before transfer
+        BigDecimal fromAccountBalance = getAccountBalance(transaction.getFromAccountId());
+        if (fromAccountBalance.compareTo(BigDecimal.valueOf(transaction.getAmount())) < 0) {
+            transaction.setStatus(TransactionStatus.Failed);
+            transaction.setTimestamp(Instant.now());
+            transactionRepository.save(transaction);
+            throw new TransactionException("Insufficient balance in account " + transaction.getFromAccountId());
+        }
+
         //  Call Account-Service to perform transfer
         boolean transferSuccess = callAccountServiceTransfer(
                 transaction.getFromAccountId(),
@@ -117,15 +126,30 @@ public class TransactionService {
         }
     }
 
+    private BigDecimal getAccountBalance(UUID accountId) {
+        try {
+            String url = "http://localhost:8082/accounts/" + accountId + "/balance";
+            ResponseEntity<BigDecimal> response = restTemplate.getForEntity(url, BigDecimal.class);
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                return response.getBody();
+            } else {
+                throw new TransactionException("Failed to fetch balance for account " + accountId);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new TransactionException("Error fetching balance for account " + accountId);
+        }
+    }
+
     private boolean callAccountServiceTransfer(UUID fromAccountId, UUID toAccountId, double amount) {
         try {
             String url = "http://localhost:8082/accounts/transfer";
 
-TransferInitiationRequestDto dto = new TransferInitiationRequestDto();
-dto.setFromAccountId(fromAccountId);
-dto.setToAccountId(toAccountId);
-dto.setAmount(amount);
-dto.setDescription("Fund transfer");
+            TransferInitiationRequestDto dto = new TransferInitiationRequestDto();
+            dto.setFromAccountId(fromAccountId);
+            dto.setToAccountId(toAccountId);
+            dto.setAmount(amount);
+            dto.setDescription("Fund transfer");
 
             restTemplate.put(url, dto); // use PUT because Account-Service expects @PutMapping
             return true;

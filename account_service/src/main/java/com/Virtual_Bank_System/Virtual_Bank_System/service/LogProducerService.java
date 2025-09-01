@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.Map;
 
-
 @Service
 public class LogProducerService {
+
     private static final Logger logger = LoggerFactory.getLogger(LogProducerService.class);
 
     private final KafkaTemplate<String, String> kafkaTemplate;
@@ -24,14 +24,18 @@ public class LogProducerService {
         this.objectMapper = objectMapper;
     }
 
-    public void sendLog(String message, String messageType) {
-        Map<String, Object> payload = Map.of(
-                "message", message,
-                "messageType", messageType,
-                "dateTime", Instant.now().toString()
-        );
-
+    public void sendLog(Object messageBody, String messageType) {
         try {
+            // Escape/serialize the actual request or response body
+            String escapedMessage = objectMapper.writeValueAsString(messageBody);
+
+            // Build the final log payload
+            Map<String, Object> payload = Map.of(
+                    "message", escapedMessage,
+                    "messageType", messageType,
+                    "dateTime", Instant.now().toString()
+            );
+
             String json = objectMapper.writeValueAsString(payload);
 
             kafkaTemplate.send("logging-topic", json)
@@ -41,7 +45,7 @@ public class LogProducerService {
                         } else {
                             RecordMetadata metadata = result.getRecordMetadata();
                             logger.info("Log sent successfully: {} (topic={}, partition={}, offset={})",
-                                    message, metadata.topic(), metadata.partition(), metadata.offset());
+                                    json, metadata.topic(), metadata.partition(), metadata.offset());
                         }
                     });
 

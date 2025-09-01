@@ -23,11 +23,11 @@ public class UserAccountController {
     // Get all accounts for a user by userId
     @GetMapping
     public ResponseEntity<List<AccountDetailsDTO>> getAccountsByUser(@PathVariable UUID userId) {
-        logProducer.sendLog("GET /users/" + userId + "/accounts - Request received", "Request");
+        logProducer.sendLog("GET /users/"+userId+"/accounts"  , "Request");
         try {
             List<AccountDetailsDTO> accounts = accountService.getAccountsByUser(userId);
 
-            logProducer.sendLog("Fetched " + accounts.size() + " accounts for userId=" + userId, "Success");
+            logProducer.sendLog(accounts, "Response");
             return ResponseEntity.ok(accounts);
 
         } catch (Exception e) {

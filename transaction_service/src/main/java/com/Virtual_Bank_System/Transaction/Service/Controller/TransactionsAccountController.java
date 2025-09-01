@@ -30,7 +30,7 @@ public class TransactionsAccountController {
 
         try {
             List<TransactionHistoryDto> transactions = transactionService.getTransactionsByAccount(accountId);
-            logProducer.sendLog("Fetched " + transactions.size() + " transactions for accountId=" + accountId, "Success");
+            logProducer.sendLog(transactions, "Response");
             return ResponseEntity.ok(transactions);
         } catch (TransactionException e) {
             logProducer.sendLog("Failed to fetch transactions for accountId=" + accountId + ": " + e.getMessage(), "Error");

@@ -16,6 +16,6 @@ import java.util.UUID;
 @JsonPropertyOrder({"transactionId","status","timestamp"})
 public class TransferResponseDto {
     private UUID transactionId;
-    private Transaction.TransactionStatus  status;
+    private Transaction.TransactionStatus status;
     private Instant timestamp;
 }

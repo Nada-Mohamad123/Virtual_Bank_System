@@ -36,7 +36,7 @@ public class DashboardController {
                 return ResponseEntity.status(404).body(errorResponse);
             }
 
-            logProducer.sendLog("Dashboard fetched successfully for userId=" + userId, "Success");
+            logProducer.sendLog(dashboard, "Response");
             return ResponseEntity.ok(dashboard);
 
         } catch (Exception e) {
