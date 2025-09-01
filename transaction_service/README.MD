@@ -78,7 +78,7 @@ The **Transaction Service** is a core module of the Virtual Bank System responsi
 }
 ```
 ### 3. Get Transaction History for Account
-**GET** `/accounts/{accountId}/transactions`
+**GET** `/transactions/accounts/{accountId}/transactions`
 
 **Success Response (200 OK)**
 
